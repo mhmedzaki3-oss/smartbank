@@ -1,0 +1,20 @@
+{
+  "name": "Smart Bank Solution",
+  "short_name": "S/Bank/S",
+  "description": "حساب ادخاري هجين 90/10 مع محرك قواعد آلي",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101d36",
+  "theme_color": "#101d36",
+  "orientation": "portrait",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
