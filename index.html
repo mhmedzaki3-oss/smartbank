@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Bank Solution</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#101d36">
+    <link rel="apple-touch-icon" href="icon.svg">
+
+    <style>
+        :root{--n:#101d36;--n2:#192b4b;--g:#d6ad58;--p:#f4f6fa;--ink:#18233a;--m:#68758b;--line:#e2e7ef;--green:#147d59;--red:#b53b43;--blue:#4774bd}
+        *{box-sizing:border-box}
+        body{margin:0;background:var(--p);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.55;transition:0.3s}
+        
+        body.en{direction:ltr;font-family:Arial,sans-serif}
+        
+        /* شاشة الترحيب */
+        #splash-screen {
+            position: fixed; inset: 0;
+            background: linear-gradient(135deg, var(--n), var(--n2));
+            z-index: 9999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: #fff;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+        }
+        #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .splash-logo { font-size: 32px; font-weight: bold; color: var(--g); margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
+        .splash-text { font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
+        .wave-hand { display: inline-block; animation: wave 2s infinite; transform-origin: 70% 70%; font-size: 28px; }
+        @keyframes wave { 0% { transform: rotate( 0.0deg) } 10% { transform: rotate(14.0deg) } 20% { transform: rotate(-8.0deg) } 30% { transform: rotate(14.0deg) } 40% { transform: rotate(-4.0deg) } 50% { transform: rotate(10.0deg) } 60% { transform: rotate( 0.0deg) } 100% { transform: rotate( 0.0deg) } }
+        
+        .enter-btn { background: var(--g); color: #201a0e; border: none; padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(214, 173, 88, 0.4); transition: transform 0.2s; }
+        .enter-btn:hover { transform: scale(1.05); }
+
+        header{background:linear-gradient(135deg,var(--n),var(--n2));color:#fff;padding:24px 18px;border-bottom:4px solid var(--g);position:relative}
+        .wrap{max-width:1100px;margin:auto;padding:0 16px}
+        .brand{color:#e9c978;font-size:12px;letter-spacing:2px;font-weight:bold}
+        h1{font-size:clamp(25px,5vw,36px);margin:8px 0}
+        .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;padding:20px 0 35px}
+        .card{grid-column:span 12;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0;box-shadow:0 5px 18px #1527490a}
+        .s8{grid-column:span 8}.s4{grid-column:span 4}.s6{grid-column:span 6}
+        .muted{font-size:13px;color:var(--m)}
+        .row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+        .field{flex:1;min-width:180px}
+        label{display:block;font-size:13px;color:var(--m);margin-bottom:5px}
+        input{font:inherit;width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:11px}
+        button{font:inherit;font-weight:bold;border:0;border-radius:11px;padding:11px 13px;cursor:pointer;transition:all 0.2s}
+        button:disabled{opacity:.4;cursor:not-allowed}
+        .primary{background:var(--n);color:#fff}.gold{background:var(--g);color:#201a0e}
+        .soft{background:#edf1f7;color:var(--n)}.green{background:var(--green);color:#fff}
+        .grey{background:#b0b7c3;color:#fff}.blue{background:var(--blue);color:#fff}
+        
+        .lang-btn{position:absolute;top:20px;left:20px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:5px 10px;border-radius:8px;font-size:12px;cursor:pointer;z-index:10}
+        body.en .lang-btn{left:auto;right:20px}
+        
+        .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+        .buttons button{flex:1;min-width:130px}
+        .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:14px}
+        .stat{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+        .stat small{display:block;color:var(--m)}
+        .stat strong{display:block;font-size:clamp(17px,3vw,23px);overflow-wrap:anywhere;margin-top:4px}
+        .status{padding:13px;border-radius:12px;background:#eef3fb;border:1px solid #dce6f5;font-size:14px}
+        .good{background:#eaf6f0!important;border-color:#c8e8d8!important;color:#126b4c}
+        .warn{background:#fff4e2!important;border-color:#f0ddb5!important;color:#7c5107}
+        .bad{background:#fff0f0!important;border-color:#f2cdcf!important;color:#962f37}
+        .kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:13px;margin-top:14px}
+        .kv div:nth-child(odd){color:var(--m)}
+        .kv div:nth-child(even){font-weight:bold;direction:ltr;text-align:left}
+        body.en .kv div:nth-child(even){text-align:right}
+        .piewrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+        .pie{width:140px;height:140px;flex:none;border-radius:50%;background:conic-gradient(var(--g) 0 90%,var(--blue) 90% 100%);position:relative}
+        .pie:after{content:"";position:absolute;inset:24px;background:#fff;border-radius:50%}
+        .legend{flex:1;min-width:160px}.legend div{margin:9px 0}
+        .audit{display:grid;gap:8px;max-height:300px;overflow:auto}
+        .event{border:1px solid var(--line);border-right:4px solid #9aa8bc;border-radius:9px;padding:9px 11px;font-size:13px;background:#fbfcfe}
+        body.en .event{border-right:1px solid var(--line);border-left:4px solid #9aa8bc}
+        .event time{display:block;font-size:11px;color:var(--m);margin-bottom:3px}
+        .event.good{border-right-color:var(--green)!important}
+        body.en .event.good{border-left-color:var(--green)!important}
+        .event.warn{border-right-color:#c38a1b!important}
+        body.en .event.warn{border-left-color:#c38a1b!important}
+        .event.bad{border-right-color:var(--red)!important}
+        body.en .event.bad{border-left-color:var(--red)!important}
+        
+        .checklist{display:grid;gap:9px}
+        .checkrow{display:flex;align-items:center;gap:10px;padding:11px;background:#f7f9fc;border:1px solid var(--line);border-radius:11px}
+        .checkrow.locked{opacity:.55}
+        .mark{width:24px;height:24px;border-radius:6px;background:#dde3ed;display:grid;place-items:center;flex:none;font-weight:bold}
+        .checkrow.ok .mark{background:#d1ead9;color:var(--green)}
+        .checktext{flex:1;font-size:13px}
+        .checkrow button{font-size:12px;padding:7px 9px}
+        .warning-line{display:block;font-size:11px;color:#9a5c00;margin-top:2px;font-style:italic}
+        .pill{display:inline-block;border-radius:20px;padding:3px 8px;background:#edf1f7;font-size:11px}
+        .pill.locked{background:#f2cdcf;color:#962f37}.pill.ok{background:#d1ead9;color:var(--green)}
+        .note{background:#fff8e9;border:1px solid #f0dfb7;border-radius:10px;padding:10px;font-size:12px;color:#76520d;margin-top:12px}
+        .timer-box{background:#eef3fb;border:1px solid #dce6f5;border-radius:10px;padding:9px 12px;font-size:13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+        .timer-box .time{font-weight:bold;color:var(--n);font-family:monospace;font-size:15px}
+        .timer-box.warning{background:#fff4e2;border-color:#f0ddb5;color:#7c5107}
+        .timer-box.expired{background:#fff0f0;border-color:#f2cdcf;color:#962f37}
+        .tip{background:#eef3fb;border:1px solid #dce6f5;border-radius:10px;padding:10px 12px;font-size:12px;color:#2c4a7a;margin-top:8px}
+        footer{text-align:center;padding:0 0 24px;color:var(--m);font-size:12px}
+        
+        @media(max-width:740px){.s8,.s4,.s6{grid-column:span 12}.stats{grid-template-columns:1fr}.checkrow{flex-wrap:wrap}.checktext{min-width:calc(100% - 45px)}.checkrow button{margin-inline-start:34px}.buttons button{min-width:calc(50% - 8px)}}
+    </style>
+</head>
+<body>
+
+<!-- شاشة الترحيب -->
+<div id="splash-screen">
+    <div class="splash-logo">SMART BANK SOLUTION</div>
+    <div class="splash-text">
+        أهلاً بك في سمارت سوليوشن <span class="wave-hand">👋</span>
+    </div>
+    <button class="enter-btn" onclick="enterApp()">اضغط للدخول 🔊</button>
+</div>
+
+<header><div class="wrap">
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">English</button>
+    <div class="brand">SMART BANK SOLUTION</div>
+    <h1 id="t_title">الحساب الذكي — محاكاة تفاعلية</h1>
+    <div class="byline">محمد زكى احمد</div>
+    <p class="subtitle" id="t_subtitle">نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10 وقواعد الربح والمخاطر.</p>
+</div></header>
+
+<main class="wrap"><div class="grid">
+    <section class="card s8">
+        <h2 id="t_capTitle">رأس المال الافتراضي</h2>
+        <div class="row">
+            <div class="field"><label for="capital" id="t_capLabel">رأس المال بالجنيه المصري</label><input id="capital" type="number" min="1" max="1000000000000" step="100" value="100000"></div>
+            <button class="primary" id="apply" onclick="applyCapital()"><span id="t_applyBtn">تحديث رأس المال</span></button>
+        </div>
+        <div id="capError" class="status bad" hidden></div>
+        <div class="stats">
+            <div class="stat"><small id="t_totalLabel">إجمالي رأس المال</small><strong id="total">100,000.00 ج.م</strong></div>
+            <div class="stat"><small id="t_safeLabel">المكوّن المحافظ — 90%</small><strong id="safe">90,000.00 ج.م</strong></div>
+            <div class="stat"><small id="t_growthLabel">مكوّن النمو — 10%</small><strong id="growth">10,000.00 ج.م</strong></div>
+        </div>
+    </section>
+
+    <section class="card s4">
+        <h2 id="t_pieTitle">التوزيع الافتراضي</h2>
+        <div class="piewrap">
+            <div class="pie" role="img"></div>
+            <div class="legend">
+                <div id="t_pieSafe">🟨 المكوّن المحافظ: <b>90%</b></div>
+                <div id="t_pieGrowth">🟦 مكوّن النمو: <b>10%</b></div>
+                <p class="muted" id="t_pieNote">افتراض تجريبي وليس توصية استثمارية.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card s6">
+        <h2 id="t_engineTitle">محرك القواعد — المحاكاة</h2>
+        <div id="status" class="status">جاهز للمحاكاة. لا توجد أوامر حقيقية.</div>
+        <div class="buttons">
+            <button class="gold" data-s="profit" id="t_btnProfit">محاكاة ربح (2.985% صافي)</button>
+            <button class="gold" data-s="profit-hit" id="t_btnProfitHit">محاكاة ربح محقق (+3% صافي)</button>
+            <button class="soft" data-s="loss" id="t_btnLoss">محاكاة هبوط −2% من النمو</button>
+            <button class="soft" data-s="invalid" id="t_btnInvalid">بيانات غير صالحة</button>
+            <button class="soft" data-s="protection" id="t_btnProtection">اختبار حد الحساب −2%</button>
+            <button class="soft" data-s="normal" id="t_btnNormal">إعادة ضبط العرض</button>
+        </div>
+        <div class="tip" id="t_tip"><b>حد إيقاف الشراء:</b> خسارة −2% من مكوّن النمو توقف الشراء الجديد. اختبار حد الحساب منفصل. لا يمثل أي منهما ضمانًا لرأس المال.</div>
+        <p class="muted" id="t_note1">إعادة ضبط العرض أو محاكاة الربح لا ترفع الحظر إذا كان مفعّلًا.</p>
+    </section>
+
+    <section class="card s6">
+        <h2 id="t_perfTitle">ملخص الأداء الافتراضي</h2>
+        <div class="stats">
+            <div class="stat"><small id="t_pnlLabel">ربح/خسارة السيناريو</small><strong id="pnl">—</strong></div>
+            <div class="stat"><small id="t_pctLabel">نسبة الأداء</small><strong id="pct">—</strong></div>
+            <div class="stat"><small id="t_buyLabel">أوامر الشراء</small><strong id="buyState">غير موقوفة</strong></div>
+        </div>
+        <div class="kv">
+            <div id="t_kv1">عتبة قفل الربح الصافي</div><div>+3.00%</div>
+            <div id="t_kv2">عتبة إيقاف الشراء — النمو</div><div>−2.00%</div>
+            <div id="t_kv3">تكلفة محاكاة الربح</div><div>0.5%</div>
+        </div>
+        <p id="scenarioNote" class="muted">اختر سيناريو لعرض النتيجة.</p>
+    </section>
+
+    <section class="card">
+        <h2 id="t_resumeTitle">إجراء الاستئناف الموثق <span id="lockPill" class="pill">الحظر غير مفعّل</span></h2>
+        <p class="muted" id="t_resumeNote">تأكيدات هذا العرض تجريبية فقط. الخطوات بالترتيب. صلاحية الجلسة 15 دقيقة، ثم تُبطل تلقائيًا.</p>
+        <div id="timerBox" class="timer-box" hidden><span id="t_timerLabel">الوقت المتبقي للاستئناف:</span><span class="time" id="timerValue">15:00</span></div>
+        <div class="checklist">
+            <div class="checkrow" id="rdata"><div class="mark">1</div><div class="checktext"><b id="t_step1">التحقق من البيانات</b><br><span class="muted" id="t_step1desc">سليمة وحديثة ومن مصدر موثوق.</span><span class="warning-line" id="t_step1warn">تأكيد محاكاة فقط.</span></div><button class="soft" data-r="data" id="t_step1btn">تسجيل تأكيد تجريبي</button></div>
+            <div class="checkrow" id="rsignal"><div class="mark">2</div><div class="checktext"><b id="t_step2">الإشارة الفنية</b><br><span class="muted" id="t_step2desc">إشارة محددة مسبقًا في سياسة المنتج.</span><span class="warning-line" id="t_step2warn">تأكيد محاكاة فقط.</span></div><button class="soft" data-r="signal" id="t_step2btn">تسجيل تأكيد تجريبي</button></div>
+            <div class="checkrow" id="rhuman"><div class="mark">3</div><div class="checktext"><b id="t_step3">الموافقة البشرية</b><br><span class="muted" id="t_step3desc">موافقة مسؤول مخوّل في النظام الحقيقي.</span><span class="warning-line" id="t_step3warn">تأكيد محاكاة فقط.</span></div><button class="soft" data-r="human" id="t_step3btn">تسجيل تأكيد تجريبي</button></div>
+        </div>
+        <div class="buttons">
+            <button id="resume" class="grey" disabled><span id="t_btnResume">اعتماد الاستئناف ورفع الحظر</span></button>
+            <button id="renew" class="blue" hidden><span id="t_btnRenew">تجديد جلسة الاستئناف</span></button>
+            <button id="abort" class="soft" disabled><span id="t_btnAbort">إلغاء إجراء الاستئناف</span></button>
+        </div>
+        <div class="note" id="t_resumeNote2">أي سيناريو جديد أو تغيير لرأس المال يبطل التأكيدات السابقة. إيقاف الشراء لا يضمن حصر الخسارة عند −2%.</div>
+    </section>
+
+    <section class="card s8">
+        <h2 id="t_logTitle">سجل التدقيق المحلي</h2>
+        <div id="log" class="audit" aria-live="polite"></div>
+        <div class="buttons">
+            <button id="clear" class="soft" onclick="clearLog()"><span id="t_btnClear">مسح سجل العرض المحلي</span></button>
+            <button id="export" class="soft" onclick="exportLog()"><span id="t_btnExport">تصدير السجل النصي</span></button>
+        </div>
+        <p class="muted" id="t_logNote">السجل محلي داخل الصفحة الحالية ويمكن مسحه أو تعديله.</p>
+    </section>
+    <section class="card s4">
+        <h2>مؤشر BII <span class="pill" id="t_biiPill">قيد التطوير</span></h2>
+        <p id="t_biiNote1">غير مفعّل في هذه النسخة.</p>
+        <p class="muted" id="t_biiNote2">لن يُستخدم قبل تحديد المنهجية والمصادر واختباره بصورة مستقلة.</p>
+        <div class="status warn" id="t_biiStatus">محاكاة فقط</div>
+    </section>
+</div></main>
+
+<footer class="wrap" id="t_footer">Smart Bank Solution — نموذج مستقل غير تابع لأي جهة. لا اتصال بمنصات استثمار ولا ضمان لرأس المال أو العائد.</footer>
+
+<script>
+// دالة الدخول وتشغيل النغمة
+function enterApp() {
+    // تشغيل النغمة الموسيقية
+    playWelcomeChime();
+    
+    // إخفاء شاشة الترحيب
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.classList.add('hidden');
+}
+
+// دالة توليد النغمة الموسيقية (Web Audio API)
+function playWelcomeChime() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        // نغمة C5 -> E5 -> G5 (نغمة صاعدة هادئة)
+        const notes = [523.25, 659.25, 783.99];
+        
+        notes.forEach((freq, index) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            
+            osc.type = 'sine'; // موجة ناعمة
+            osc.frequency.value = freq;
+            
+            // بداية الصوت
+            const startTime = ctx.currentTime + (index * 0.15);
+            const duration = 1.2; // مدة النغمة الواحدة
+            
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05); // Fade in
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Fade out
+            
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        });
+    } catch (e) {
+        console.log("Audio not supported", e);
+    }
+}
+
+// القاموس الخاص بترجمة النصوص
+const i18n = {
+    ar: {
+        langBtn: "English",
+        title: "الحساب الذكي — محاكاة تفاعلية",
+        subtitle: "نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10 وقواعد الربح والمخاطر.",
+        capTitle: "رأس المال الافتراضي", capLabel: "رأس المال بالجنيه المصري", applyBtn: "تحديث رأس المال",
+        totalLabel: "إجمالي رأس المال", safeLabel: "المكوّن المحافظ — 90%", growthLabel: "مكوّن النمو — 10%",
+        pieTitle: "التوزيع الافتراضي", pieSafe: "🟨 المكوّن المحافظ: <b>90%</b>", pieGrowth: "🟦 مكوّن النمو: <b>10%</b>", pieNote: "افتراض تجريبي وليس توصية استثمارية.",
+        engineTitle: "محرك القواعد — المحاكاة",
+        btnProfit: "محاكاة ربح (2.985% صافي)", btnProfitHit: "محاكاة ربح محقق (+3% صافي)", btnLoss: "محاكاة هبوط −2% من النمو", btnInvalid: "بيانات غير صالحة", btnProtection: "اختبار حد الحساب −2%", btnNormal: "إعادة ضبط العرض",
+        tip: "<b>حد إيقاف الشراء:</b> خسارة −2% من مكوّن النمو توقف الشراء الجديد. اختبار حد الحساب منفصل. لا يمثل أي منهما ضمانًا لرأس المال.",
+        note1: "إعادة ضبط العرض أو محاكاة الربح لا ترفع الحظر إذا كان مفعّلًا.",
+        perfTitle: "ملخص الأداء الافتراضي", pnlLabel: "ربح/خسارة السيناريو", pctLabel: "نسبة الأداء", buyLabel: "أوامر الشراء",
+        buyStateStopped: "موقوفة مؤقتًا", buyStateActive: "غير موقوفة",
+        kv1: "عتبة قفل الربح الصافي", kv2: "عتبة إيقاف الشراء — النمو", kv3: "تكلفة محاكاة الربح",
+        resumeTitle: "إجراء الاستئناف الموثق", resumeNote: "تأكيدات هذا العرض تجريبية فقط. الخطوات بالترتيب. صلاحية الجلسة 15 دقيقة، ثم تُبطل تلقائيًا.",
+        timerLabel: "الوقت المتبقي للاستئناف:",
+        step1: "التحقق من البيانات", step1desc: "سليمة وحديثة ومن مصدر موثوق.", step1warn: "تأكيد محاكاة فقط.",
+        step2: "الإشارة الفنية", step2desc: "إشارة محددة مسبقًا في سياسة المنتج.", step2warn: "تأكيد محاكاة فقط.",
+        step3: "الموافقة البشرية", step3desc: "موافقة مسؤول مخوّل في النظام الحقيقي.", step3warn: "تأكيد محاكاة فقط.",
+        btnStep: "تسجيل تأكيد تجريبي", btnResume: "اعتماد الاستئناف ورفع الحظر", btnRenew: "تجديد جلسة الاستئناف", btnAbort: "إلغاء إجراء الاستئناف",
+        resumeNote2: "أي سيناريو جديد أو تغيير لرأس المال يبطل التأكيدات السابقة. إيقاف الشراء لا يضمن حصر الخسارة عند −2%.",
+        logTitle: "سجل التدقيق المحلي", btnClear: "مسح سجل العرض المحلي", btnExport: "تصدير السجل النصي", logNote: "السجل محلي داخل الصفحة الحالية ويمكن مسحه أو تعديله.",
+        biiPill: "قيد التطوير", biiNote1: "غير مفعّل في هذه النسخة.", biiNote2: "لن يُستخدم قبل تحديد المنهجية والمصادر واختباره بصورة مستقلة.", biiStatus: "محاكاة فقط",
+        footer: "Smart Bank Solution — نموذج مستقل غير تابع لأي جهة. لا اتصال بمنصات استثمار ولا ضمان لرأس المال أو العائد."
+    },
+    en: {
+        langBtn: "عربي",
+        title: "Smart Account — Interactive Simulation",
+        subtitle: "An independent offline model to illustrate 90/10 allocation, profit, and risk rules.",
+        capTitle: "Virtual Capital", capLabel: "Capital in EGP", applyBtn: "Update Capital",
+        totalLabel: "Total Capital", safeLabel: "Safe Bucket — 90%", growthLabel: "Growth Bucket — 10%",
+        pieTitle: "Default Allocation", pieSafe: "🟨 Safe Bucket: <b>90%</b>", pieGrowth: "🟦 Growth Bucket: <b>10%</b>", pieNote: "Simulation assumption, not investment advice.",
+        engineTitle: "Rules Engine — Simulation",
+        btnProfit: "Simulate Profit (2.985% Net)", btnProfitHit: "Simulate Realized Profit (+3% Net)", btnLoss: "Simulate Drop −2% (Growth)", btnInvalid: "Invalid Data", btnProtection: "Test Account Limit −2%", btnNormal: "Reset View",
+        tip: "<b>Buy Stop-Limit:</b> A -2% loss in the Growth bucket stops new buys. Account limit test is separate. Neither guarantees capital.",
+        note1: "Resetting the view or simulating profit does not lift the block if active.",
+        perfTitle: "Virtual Performance Summary", pnlLabel: "Scenario P/L", pctLabel: "Performance Ratio", buyLabel: "Buy Orders",
+        buyStateStopped: "Temporarily Stopped", buyStateActive: "Active",
+        kv1: "Net Profit Lock Threshold", kv2: "Buy Stop Threshold — Growth", kv3: "Profit Simulation Cost",
+        resumeTitle: "Documented Appeal Process", resumeNote: "Confirmations are simulated. Steps are sequential. Session valid for 15 mins.",
+        timerLabel: "Remaining Time:",
+        step1: "Data Validation", step1desc: "Valid, recent, and from a trusted source.", step1warn: "Simulation only.",
+        step2: "Technical Signal", step2desc: "Predefined signal in product policy.", step2warn: "Simulation only.",
+        step3: "Human Approval", step3desc: "Authorized official approval in real system.", step3warn: "Simulation only.",
+        btnStep: "Record Simulated Confirmation", btnResume: "Approve Appeal & Lift Block", btnRenew: "Renew Appeal Session", btnAbort: "Cancel Appeal",
+        resumeNote2: "Any new scenario or capital change invalidates previous confirmations. Stopping buys does not guarantee loss limit at -2%.",
+        logTitle: "Local Audit Log", btnClear: "Clear Local Log", btnExport: "Export Text Log", logNote: "Log is local to this page and can be cleared.",
+        biiPill: "In Development", biiNote1: "Not activated in this version.", biiNote2: "Will not be used before methodology and sources are independently tested.", biiStatus: "Simulation Only",
+        footer: "Smart Bank Solution — Independent model. Not affiliated with any entity. No real trading, no capital guarantee."
+    }
+};
+
+let currentLang = 'ar';
+
+function toggleLang() {
+    currentLang = currentLang === 'ar' ? 'en' : 'ar';
+    const dict = i18n[currentLang];
+    
+    document.documentElement.lang = currentLang;
+    document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+    document.body.className = currentLang === 'en' ? 'en' : '';
+
+    document.getElementById('langBtn').innerText = dict.langBtn;
+    document.getElementById('t_title').innerText = dict.title;
+    document.getElementById('t_subtitle').innerText = dict.subtitle;
+    document.getElementById('t_capTitle').innerText = dict.capTitle;
+    document.getElementById('t_capLabel').innerText = dict.capLabel;
+    document.getElementById('t_applyBtn').innerText = dict.applyBtn;
+    document.getElementById('t_totalLabel').innerText = dict.totalLabel;
+    document.getElementById('t_safeLabel').innerText = dict.safeLabel;
+    document.getElementById('t_growthLabel').innerText = dict.growthLabel;
+    document.getElementById('t_pieTitle').innerText = dict.pieTitle;
+    document.getElementById('t_pieSafe').innerHTML = dict.pieSafe;
+    document.getElementById('t_pieGrowth').innerHTML = dict.pieGrowth;
+    document.getElementById('t_pieNote').innerText = dict.pieNote;
+    document.getElementById('t_engineTitle').innerText = dict.engineTitle;
+    
+    document.getElementById('t_btnProfit').innerText = dict.btnProfit;
+    document.getElementById('t_btnProfitHit').innerText = dict.btnProfitHit;
+    document.getElementById('t_btnLoss').innerText = dict.btnLoss;
+    document.getElementById('t_btnInvalid').innerText = dict.btnInvalid;
+    document.getElementById('t_btnProtection').innerText = dict.btnProtection;
+    document.getElementById('t_btnNormal').innerText = dict.btnNormal;
+    
+    document.getElementById('t_tip').innerHTML = dict.tip;
+    document.getElementById('t_note1').innerText = dict.note1;
+    
+    document.getElementById('t_perfTitle').innerText = dict.perfTitle;
+    document.getElementById('t_pnlLabel').innerText = dict.pnlLabel;
+    document.getElementById('t_pctLabel').innerText = dict.pctLabel;
+    document.getElementById('t_buyLabel').innerText = dict.buyLabel;
+    
+    document.getElementById('t_kv1').innerText = dict.kv1;
+    document.getElementById('t_kv2').innerText = dict.kv2;
+    document.getElementById('t_kv3').innerText = dict.kv3;
+    
+    document.getElementById('t_resumeTitle').childNodes[0].nodeValue = dict.resumeTitle + ' ';
+    document.getElementById('t_resumeNote').innerText = dict.resumeNote;
+    document.getElementById('t_timerLabel').innerText = dict.timerLabel;
+    
+    document.getElementById('t_step1').innerText = dict.step1;
+    document.getElementById('t_step1desc').innerText = dict.step1desc;
+    document.getElementById('t_step1warn').innerText = dict.step1warn;
+    document.getElementById('t_step1btn').innerText = dict.btnStep;
+    
+    document.getElementById('t_step2').innerText = dict.step2;
+    document.getElementById('t_step2desc').innerText = dict.step2desc;
+    document.getElementById('t_step2warn').innerText = dict.step2warn;
+    document.getElementById('t_step2btn').innerText = dict.btnStep;
+    
+    document.getElementById('t_step3').innerText = dict.step3;
+    document.getElementById('t_step3desc').innerText = dict.step3desc;
+    document.getElementById('t_step3warn').innerText = dict.step3warn;
+    document.getElementById('t_step3btn').innerText = dict.btnStep;
+    
+    document.getElementById('t_btnResume').innerText = dict.btnResume;
+    document.getElementById('t_btnRenew').innerText = dict.btnRenew;
+    document.getElementById('t_btnAbort').innerText = dict.btnAbort;
+    document.getElementById('t_resumeNote2').innerText = dict.resumeNote2;
+    
+    document.getElementById('t_logTitle').innerText = dict.logTitle;
+    document.getElementById('t_btnClear').innerText = dict.btnClear;
+    document.getElementById('t_btnExport').innerText = dict.btnExport;
+    document.getElementById('t_logNote').innerText = dict.logNote;
+    
+    document.getElementById('t_biiPill').innerText = dict.biiPill;
+    document.getElementById('t_biiNote1').innerText = dict.biiNote1;
+    document.getElementById('t_biiNote2').innerText = dict.biiNote2;
+    document.getElementById('t_biiStatus').innerText = dict.biiStatus;
+    document.getElementById('t_footer').innerText = dict.footer;
+    
+    render();
+}
+
+let capital = 100000, stopped = false, seq = 0, inProgress = false;
+let checks = {data: false, signal: false, human: false};
+let sessionId = null, timer = null, remaining = 0;
+const SESSION = 900;
+
+const money = n => new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(n) + (currentLang === 'ar' ? ' ج.م' : ' EGP');
+
+function log(msg, level = '') {
+    seq++;
+    const e = document.createElement('div');
+    e.className = 'event ' + level;
+    const t = document.createElement('time');
+    t.textContent = '#' + seq + ' — ' + new Date().toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US');
+    const b = document.createElement('div');
+    b.textContent = msg;
+    e.append(t, b);
+    document.getElementById('log').prepend(e);
+}
+
+function status(msg, level = '') {
+    document.getElementById('status').className = 'status ' + level;
+    document.getElementById('status').textContent = msg;
+}
+
+function stopTimer() {
+    if (timer !== null) clearInterval(timer);
+    timer = null;
+    document.getElementById('timerBox').hidden = true;
+    remaining = 0;
+}
+
+function clearChecks(reason = '') {
+    const had = inProgress || checks.data || checks.signal || checks.human;
+    inProgress = false;
+    checks = {data: false, signal: false, human: false};
+    sessionId = null;
+    stopTimer();
+    document.getElementById('renew').hidden = true;
+    if (had && reason) log(reason + (currentLang==='ar'?'؛ أُلغيت التأكيدات السابقة والحظر مستمر.':' - Previous confirmations cleared, block remains.'), 'warn');
+    render();
+}
+
+function timerDisplay() {
+    const m = Math.floor(remaining / 60).toString().padStart(2, '0'), s = (remaining % 60).toString().padStart(2, '0');
+    document.getElementById('timerValue').textContent = m + ':' + s;
+    document.getElementById('timerBox').className = 'timer-box' + (remaining <= 60 ? ' warning' : '');
+}
+
+function startTimer() {
+    stopTimer();
+    remaining = SESSION;
+    document.getElementById('timerBox').hidden = false;
+    document.getElementById('renew').hidden = true;
+    timerDisplay();
+    log(currentLang==='ar'?'بدء جلسة استئناف تجريبية '+sessionId+'؛ الصلاحية 15 دقيقة.':'Started appeal session '+sessionId+'; valid for 15 mins.', '');
+    timer = setInterval(() => {
+        remaining--;
+        timerDisplay();
+        if (remaining <= 0) {
+            stopTimer();
+            inProgress = false;
+            checks = {data: false, signal: false, human: false};
+            sessionId = null;
+            document.getElementById('timerBox').hidden = false;
+            document.getElementById('timerBox').className = 'timer-box expired';
+            document.getElementById('timerValue').textContent = '00:00';
+            document.getElementById('renew').hidden = false;
+            log(currentLang==='ar'?'انتهت صلاحية الجلسة وأُبطلت التأكيدات.':'Session expired; confirmations cleared.', 'bad');
+            status(currentLang==='ar'?'انتهت الجلسة؛ جدّدها وابدأ من التحقق من البيانات.':'Session expired; renew and start from data validation.', 'bad');
+            render();
+        }
+    }, 1000);
+}
+
+function render() {
+    const dict = i18n[currentLang];
+    document.getElementById('buyState').textContent = stopped ? dict.buyStateStopped : dict.buyStateActive;
+    document.getElementById('buyState').style.color = stopped ? 'var(--red)' : 'var(--ink)';
+    
+    const lockPill = document.getElementById('lockPill');
+    lockPill.textContent = stopped ? (currentLang==='ar'?'الحظر مفعّل':'Block Active') : (currentLang==='ar'?'الحظر غير مفعّل':'Block Inactive');
+    lockPill.className = 'pill' + (stopped ? ' locked' : ' ok');
+
+    ['data', 'signal', 'human'].forEach((k, i) => {
+        const row = document.getElementById('r' + k), done = checks[k];
+        row.classList.toggle('ok', done);
+        row.classList.toggle('locked', !stopped);
+        row.querySelector('.mark').textContent = done ? '✓' : String(i + 1);
+        row.querySelector('button').disabled = !stopped || !inProgress || done || (k === 'signal' && !checks.data) || (k === 'human' && !(checks.data && checks.signal));
+    });
+    
+    const all = stopped && inProgress && checks.data && checks.signal && checks.human;
+    const resumeBtn = document.getElementById('resume');
+    resumeBtn.disabled = !all;
+    resumeBtn.className = all ? 'green' : 'grey';
+    document.getElementById('abort').disabled = !(stopped && inProgress);
+}
+
+function resetMetrics() {
+    document.getElementById('pnl').textContent = '—';
+    document.getElementById('pct').textContent = '—';
+    document.getElementById('pnl').style.color = 'var(--ink)';
+    document.getElementById('pct').style.color = 'var(--ink)';
+}
+
+function applyCapital() {
+    const raw = document.getElementById('capital').value.trim(), v = Number(raw);
+    if (!raw || !Number.isFinite(v) || v <= 0 || v > 1e12) {
+        document.getElementById('capError').hidden = false;
+        document.getElementById('capError').textContent = currentLang==='ar'?'أدخل مبلغًا أكبر من صفر ولا يتجاوز 1,000,000,000,000 جنيه.':'Enter an amount > 0 and <= 1 Trillion EGP.';
+        return;
+    }
+    document.getElementById('capError').hidden = true;
+    if (v !== capital) clearChecks(currentLang==='ar'?'تغيير رأس المال':'Capital change');
+    capital = v;
+    document.getElementById('total').textContent = money(v);
+    document.getElementById('safe').textContent = money(v * .9);
+    document.getElementById('growth').textContent = money(v * .1);
+    resetMetrics();
+    document.getElementById('scenarioNote').textContent = currentLang==='ar'?'تم تحديث رأس المال الافتراضي.':'Virtual capital updated.';
+    status(stopped ? (currentLang==='ar'?'تم التحديث؛ الحظر ما زال ساريًا.':'Updated; block remains.') : (currentLang==='ar'?'تم التحديث — جاهز للمحاكاة.':'Updated - Ready.'), stopped ? 'bad' : '');
+    log((currentLang==='ar'?'تحديث رأس المال الافتراضي إلى ':'Capital updated to ') + money(v) + '.');
+}
+
+function simulate(type) {
+    if (type === 'protection' && !confirm(currentLang==='ar'?'سيتم تفعيل الحظر في المحاكاة. هل تريد المتابعة؟':'This will activate the block. Continue?')) return;
+    clearChecks(currentLang==='ar'?'اختيار سيناريو جديد':'New scenario selected');
+    resetMetrics();
+    const growth = capital * .1;
+    const sNote = document.getElementById('scenarioNote');
+
+    if (type === 'profit') {
+        const gross = growth * .03, cost = gross * .005, net = gross - cost, rate = net / growth * 100;
+        document.getElementById('pnl').textContent = '+' + money(net);
+        document.getElementById('pct').textContent = '+' + rate.toFixed(3) + '%';
+        document.getElementById('pnl').style.color = document.getElementById('pct').style.color = 'var(--green)';
+        sNote.textContent = currentLang==='ar'?'افتراض تعليمي: تكلفة 0.5% من الربح الإجمالي؛ صافي 2.985% أقل من العتبة.':'Educational: 0.5% cost; Net 2.985% < threshold.';
+        status(stopped ? (currentLang==='ar'?'الربح لا يرفع الحظر؛ الاستئناف مطلوب.':'Profit does not lift block; appeal required.') : (currentLang==='ar'?'صافي النتيجة أقل من +3%؛ لا يتحقق شرط قفل الربح.':'Net < +3%; profit lock not triggered.'), 'warn');
+        log(currentLang==='ar'?'محاكاة ربح: إجمالي '+money(gross)+'، تكلفة '+money(cost)+'، صافي '+money(net)+' ('+rate.toFixed(3)+'%).':'Profit sim: Gross '+money(gross)+', Cost '+money(cost)+', Net '+money(net)+' ('+rate.toFixed(3)+'%).', 'warn');
+    } else if (type === 'profit-hit') {
+        const net = growth * .03, gross = net / .995, cost = gross - net;
+        document.getElementById('pnl').textContent = '+' + money(net);
+        document.getElementById('pct').textContent = '+3.000%';
+        document.getElementById('pnl').style.color = document.getElementById('pct').style.color = 'var(--green)';
+        sNote.textContent = currentLang==='ar'?'الصافي بلغ +3%. يلزم في النظام الحقيقي تحقق من التسوية؛ لا يحدث تحويل هنا.':'Net hit +3%. Real system requires settlement; no transfer here.';
+        status(stopped ? (currentLang==='ar'?'تحقق سيناريو الربح لا يرفع الحظر.':'Profit scenario does not lift block.') : (currentLang==='ar'?'بلغت عتبة الربح في المحاكاة فقط؛ يلزم التحقق من التسوية.':'Profit threshold hit in sim; settlement required.'), 'good');
+        log(currentLang==='ar'?'محاكاة ربح صافٍ +3%؛ لا تحويل فعلي.':'Net +3% sim; no real transfer.', 'good');
+    } else if (type === 'loss') {
+        stopped = true;
+        const loss = growth * .02;
+        document.getElementById('pnl').textContent = '−' + money(loss);
+        document.getElementById('pct').textContent = '−2.000% ' + (currentLang==='ar'?'من النمو':'(Growth)');
+        document.getElementById('pnl').style.color = document.getElementById('pct').style.color = 'var(--red)';
+        sNote.textContent = currentLang==='ar'?'خسارة افتراضية من مكوّن النمو. لا بيع تلقائي ولا ضمان لحصر الخسارة عند −2%.':'Virtual loss in Growth. No auto-sell, no guarantee of -2% cap.';
+        status(currentLang==='ar'?'رُصدت عتبة −2% من مكوّن النمو: إيقاف الشراء الجديد.':'Growth -2% hit: new buys stopped.', 'bad');
+        log(currentLang==='ar'?'محاكاة هبوط −2% من النمو؛ إيقاف الشراء الجديد.':'Loss sim -2% Growth; buys stopped.', 'bad');
+    } else if (type === 'invalid') {
+        stopped = true;
+        sNote.textContent = currentLang==='ar'?'بيانات قديمة أو متعارضة أو غير موثوقة: حظر القرار المتأثر.':'Invalid data: affected decision blocked.';
+        status(currentLang==='ar'?'بيانات غير صالحة: الحظر مفعّل؛ التأكيدات السابقة ملغاة.':'Invalid data: block active; prior confirmations cleared.', 'bad');
+        log(currentLang==='ar'?'بيانات غير صالحة؛ تفعيل الحظر وإبطال التأكيدات.':'Invalid data; block active, confirmations cleared.', 'bad');
+    } else if (type === 'protection') {
+        stopped = true;
+        const loss = capital * .02;
+        document.getElementById('pnl').textContent = '−' + money(loss);
+        document.getElementById('pct').textContent = '−2.000% ' + (currentLang==='ar'?'من الإجمالي':'(Total)');
+        document.getElementById('pnl').style.color = document.getElementById('pct').style.color = 'var(--red)';
+        sNote.textContent = currentLang==='ar'?'اختبار حد إجمالي الحساب منفصل. آلية تقنية لا تضمن حدًا أقصى للخسارة.':'Account limit test separate. Tech mechanism, no loss guarantee.';
+        status(currentLang==='ar'?'اختبار حد الحساب: إيقاف الأنشطة الجديدة في المحاكاة.':'Account limit test: new activities stopped.', 'bad');
+        log(currentLang==='ar'?'اختبار حد إجمالي الحساب −2%؛ إيقاف الأنشطة.':'Account limit -2% test; activities stopped.', 'bad');
+    } else {
+        sNote.textContent = currentLang==='ar'?'إعادة ضبط العرض لا تعيد تعيين المخاطر ولا ترفع الحظر.':'Reset does not clear risks or lift block.';
+        status(stopped ? (currentLang==='ar'?'إعادة ضبط العرض فقط؛ الحظر مستمر.':'Reset only; block remains.') : (currentLang==='ar'?'تمت إعادة ضبط العرض فقط.':'View reset.'), stopped ? 'bad' : '');
+        log(stopped ? (currentLang==='ar'?'إعادة ضبط العرض؛ الحظر مستمر.':'View reset; block remains.') : (currentLang==='ar'?'إعادة ضبط العرض.':'View reset.'), 'warn');
+    }
+    render();
+}
+
+document.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', () => simulate(b.dataset.s)));
+
+document.querySelectorAll('[data-r]').forEach(btn => btn.addEventListener('click', () => {
+    if (!stopped) return;
+    const k = btn.dataset.r;
+    if (!inProgress) {
+        if (k !== 'data') { status(currentLang==='ar'?'ابدأ بالتحقق من البيانات أولًا.':'Start with data validation.', 'warn'); return; }
+        inProgress = true;
+        checks = {data: false, signal: false, human: false};
+        sessionId = 'DEMO-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+        startTimer();
+    }
+    if ((k === 'signal' && !checks.data) || (k === 'human' && !(checks.data && checks.signal))) {
+        status(currentLang==='ar'?(k === 'signal' ? 'يجب تأكيد البيانات أولًا.' : 'يجب تأكيد البيانات والإشارة أولًا.'):('Confirm Data first.'), 'warn');
+        return;
+    }
+    if (checks[k]) return;
+    checks[k] = true;
+    const label = k === 'data' ? (currentLang==='ar'?'بيانات':'Data') : k === 'signal' ? (currentLang==='ar'?'إشارة':'Signal') : (currentLang==='ar'?'موافقة':'Approval');
+    log((currentLang==='ar'?'تأكيد تجريبي لـ ':'Simulated confirmation: ') + label + ' — ' + sessionId + '.', 'good');
+    status(checks.data && checks.signal && checks.human ? (currentLang==='ar'?'اكتملت التأكيدات؛ اعتمد الاستئناف.':'All confirmed; approve appeal.') : (currentLang==='ar'?'تم تسجيل الخطوة؛ أكمل بالترتيب.':'Step logged; continue.'), 'warn');
+    render();
+}));
+
+document.getElementById('resume').addEventListener('click', () => {
+    if (!(stopped && inProgress && checks.data && checks.signal && checks.human)) return;
+    const uid = sessionId;
+    stopped = false;
+    clearChecks();
+    render();
+    status(currentLang==='ar'?'تم رفع الحظر في المحاكاة بعد اكتمال الخطوات التجريبية.':'Block lifted in simulation after steps completed.', 'good');
+    log((currentLang==='ar'?'اعتماد استئناف تجريبي ':'Appeal approved ')+uid+(currentLang==='ar'?'؛ رُفع الحظر.':' - Block lifted.'), 'good');
+});
+
+document.getElementById('renew').addEventListener('click', () => {
+    if (!stopped) return;
+    clearChecks(currentLang==='ar'?'تجديد جلسة الاستئناف':'Appeal session renewed');
+    document.getElementById('renew').hidden = true;
+    status(currentLang==='ar'?'تم تجديد الجلسة؛ ابدأ بتأكيد البيانات.':'Session renewed; start with data.', '');
+    log(currentLang==='ar'?'تم طلب جلسة استئناف جديدة.':'New appeal session requested.', '');
+});
+
+document.getElementById('abort').addEventListener('click', () => {
+    if (!stopped || !inProgress) return;
+    if (!confirm(currentLang==='ar'?'إلغاء الإجراء ومسح التأكيدات؟ سيبقى الحظر مفعّلًا.':'Cancel and clear confirmations? Block remains.')) return;
+    const uid = sessionId;
+    clearChecks(currentLang==='ar'?'إلغاء إجراء الاستئناف':'Appeal cancelled');
+    document.getElementById('renew').hidden = false;
+    status(currentLang==='ar'?'أُلغي الإجراء؛ الحظر مستمر.':'Cancelled; block remains.', 'bad');
+    log((currentLang==='ar'?'إلغاء جلسة ':'Cancelled session ')+uid+'.', 'warn');
+});
+
+function clearLog() {
+    if (!confirm(currentLang==='ar'?'مسح سجل العرض المحلي الظاهر؟':'Clear local log?')) return;
+    document.getElementById('log').replaceChildren();
+    seq = 0;
+    log(currentLang==='ar'?'تم مسح سجل العرض المحلي؛ سجل تجريبي قابل للمسح.':'Local log cleared.', 'warn');
+}
+
+function exportLog() {
+    const lines = Array.from(document.getElementById('log').children).map(e => (e.querySelector('time')?.textContent || '') + ' — ' + (e.lastElementChild?.textContent || ''));
+    const blob = new Blob([lines.join('\n')], {type: 'text/plain;charset=utf-8'}), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url;
+    a.download = 'Smart_Bank_Solution_audit.txt';
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    log(currentLang==='ar'?'تم تصدير سجل العرض النصي.':'Audit log exported.', '');
+}
+
+log(currentLang==='ar'?'تم تحميل Smart Bank Solution (PWA)؛ جميع العمليات افتراضية فقط.':'Smart Bank Solution (PWA) loaded; all operations are simulated.');
+render();
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(reg => console.log('SW Registered!', reg))
+      .catch(err => console.log('SW Registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
