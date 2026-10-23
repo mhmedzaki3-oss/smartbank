@@ -3,111 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Bank Solution</title>
-
+    <title>Smart Bank Solution - V6.5 (Testing)</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#101d36">
     <link rel="apple-touch-icon" href="icon.svg">
-
     <style>
-        :root{--n:#101d36;--n2:#192b4b;--g:#d6ad58;--p:#f4f6fa;--ink:#18233a;--m:#68758b;--line:#e2e7ef;--green:#147d59;--red:#b53b43;--blue:#4774bd}
-        *{box-sizing:border-box}
-        body{margin:0;background:var(--p);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.55;transition:0.3s}
+        :root { --n: #101d36; --n2: #192b4b; --g: #d6ad58; --p: #f4f6fa; --ink: #18233a; --m: #68758b; --line: #e2e7ef; --green: #147d59; --red: #b53b43; --blue: #4774bd; --bg-card: #fff; }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--p); color: var(--ink); font-family: Tahoma, Arial, sans-serif; line-height: 1.55; transition: 0.3s; }
+        body.en { direction: ltr; font-family: Arial, sans-serif; }
         
-        body.en{direction:ltr;font-family:Arial,sans-serif}
-        
-        /* شاشة الترحيب */
-        #splash-screen {
-            position: fixed; inset: 0;
-            background: linear-gradient(135deg, var(--n), var(--n2));
-            z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            color: #fff;
-            transition: opacity 0.8s ease-out, visibility 0.8s;
-        }
+        #splash-screen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--n), var(--n2)); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; transition: opacity 0.8s ease-out, visibility 0.8s; }
         #splash-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .splash-logo { font-size: 32px; font-weight: bold; color: var(--g); margin-bottom: 20px; letter-spacing: 2px; text-align: center; }
         .splash-text { font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; margin-bottom: 30px; }
         .wave-hand { display: inline-block; animation: wave 2s infinite; transform-origin: 70% 70%; font-size: 28px; }
         @keyframes wave { 0% { transform: rotate( 0.0deg) } 10% { transform: rotate(14.0deg) } 20% { transform: rotate(-8.0deg) } 30% { transform: rotate(14.0deg) } 40% { transform: rotate(-4.0deg) } 50% { transform: rotate(10.0deg) } 60% { transform: rotate( 0.0deg) } 100% { transform: rotate( 0.0deg) } }
-        
         .enter-btn { background: var(--g); color: #201a0e; border: none; padding: 12px 30px; font-size: 18px; font-weight: bold; border-radius: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(214, 173, 88, 0.4); transition: transform 0.2s; }
         .enter-btn:hover { transform: scale(1.05); }
 
-        header{background:linear-gradient(135deg,var(--n),var(--n2));color:#fff;padding:24px 18px;border-bottom:4px solid var(--g);position:relative}
-        .wrap{max-width:1100px;margin:auto;padding:0 16px}
-        .brand{color:#e9c978;font-size:12px;letter-spacing:2px;font-weight:bold}
-        h1{font-size:clamp(25px,5vw,36px);margin:8px 0}
-        .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px;padding:20px 0 35px}
-        .card{grid-column:span 12;background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0;box-shadow:0 5px 18px #1527490a}
-        .s8{grid-column:span 8}.s4{grid-column:span 4}.s6{grid-column:span 6}
-        .muted{font-size:13px;color:var(--m)}
-        .row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
-        .field{flex:1;min-width:180px}
-        label{display:block;font-size:13px;color:var(--m);margin-bottom:5px}
-        input{font:inherit;width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:11px}
-        button{font:inherit;font-weight:bold;border:0;border-radius:11px;padding:11px 13px;cursor:pointer;transition:all 0.2s}
-        button:disabled{opacity:.4;cursor:not-allowed}
-        .primary{background:var(--n);color:#fff}.gold{background:var(--g);color:#201a0e}
-        .soft{background:#edf1f7;color:var(--n)}.green{background:var(--green);color:#fff}
-        .grey{background:#b0b7c3;color:#fff}.blue{background:var(--blue);color:#fff}
+        header { background: linear-gradient(135deg, var(--n), var(--n2)); color: #fff; padding: 24px 18px; border-bottom: 4px solid var(--g); position: relative; }
+        .wrap { max-width: 1100px; margin: auto; padding: 0 16px; }
+        .brand { color: #e9c978; font-size: 12px; letter-spacing: 2px; font-weight: bold; }
+        h1 { font-size: clamp(25px, 5vw, 36px); margin: 8px 0; }
+        .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 14px; padding: 20px 0 35px; }
+        .card { grid-column: span 12; background: var(--bg-card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; min-width: 0; box-shadow: 0 5px 18px #1527490a; }
+        .s8 { grid-column: span 8; } .s4 { grid-column: span 4; } .s6 { grid-column: span 6; }
+        .muted { font-size: 13px; color: var(--m); }
+        .row { display: flex; gap: 10px; align-items: end; flex-wrap: wrap; }
+        .field { flex: 1; min-width: 180px; }
+        label { display: block; font-size: 13px; color: var(--m); margin-bottom: 5px; }
+        input { font: inherit; width: 100%; padding: 12px; border: 1px solid #ccd5e2; border-radius: 11px; }
+        button { font: inherit; font-weight: bold; border: 0; border-radius: 11px; padding: 11px 13px; cursor: pointer; transition: all 0.2s; }
+        button:disabled { opacity: .4; cursor: not-allowed; }
+        .primary { background: var(--n); color: #fff; } .gold { background: var(--g); color: #201a0e; }
+        .soft { background: #edf1f7; color: var(--n); } .green { background: var(--green); color: #fff; }
+        .grey { background: #b0b7c3; color: #fff; } .blue { background: var(--blue); color: #fff; }
         
-        .lang-btn{position:absolute;top:20px;left:20px;background:rgba(255,255,255,0.1);color:#fff;border:1px solid rgba(255,255,255,0.3);padding:5px 10px;border-radius:8px;font-size:12px;cursor:pointer;z-index:10}
-        body.en .lang-btn{left:auto;right:20px}
+        .lang-btn { position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 5px 10px; border-radius: 8px; font-size: 12px; cursor: pointer; z-index: 10; }
+        body.en .lang-btn { left: auto; right: 20px; }
         
-        .buttons{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
-        .buttons button{flex:1;min-width:130px}
-        .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:14px}
-        .stat{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
-        .stat small{display:block;color:var(--m)}
-        .stat strong{display:block;font-size:clamp(17px,3vw,23px);overflow-wrap:anywhere;margin-top:4px}
-        .status{padding:13px;border-radius:12px;background:#eef3fb;border:1px solid #dce6f5;font-size:14px}
-        .good{background:#eaf6f0!important;border-color:#c8e8d8!important;color:#126b4c}
-        .warn{background:#fff4e2!important;border-color:#f0ddb5!important;color:#7c5107}
-        .bad{background:#fff0f0!important;border-color:#f2cdcf!important;color:#962f37}
-        .kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:13px;margin-top:14px}
-        .kv div:nth-child(odd){color:var(--m)}
-        .kv div:nth-child(even){font-weight:bold;direction:ltr;text-align:left}
-        body.en .kv div:nth-child(even){text-align:right}
-        .piewrap{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
-        .pie{width:140px;height:140px;flex:none;border-radius:50%;background:conic-gradient(var(--g) 0 90%,var(--blue) 90% 100%);position:relative}
-        .pie:after{content:"";position:absolute;inset:24px;background:#fff;border-radius:50%}
-        .legend{flex:1;min-width:160px}.legend div{margin:9px 0}
-        .audit{display:grid;gap:8px;max-height:300px;overflow:auto}
-        .event{border:1px solid var(--line);border-right:4px solid #9aa8bc;border-radius:9px;padding:9px 11px;font-size:13px;background:#fbfcfe}
-        body.en .event{border-right:1px solid var(--line);border-left:4px solid #9aa8bc}
-        .event time{display:block;font-size:11px;color:var(--m);margin-bottom:3px}
-        .event.good{border-right-color:var(--green)!important}
-        body.en .event.good{border-left-color:var(--green)!important}
-        .event.warn{border-right-color:#c38a1b!important}
-        body.en .event.warn{border-left-color:#c38a1b!important}
-        .event.bad{border-right-color:var(--red)!important}
-        body.en .event.bad{border-left-color:var(--red)!important}
+        .buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 13px; }
+        .buttons button { flex: 1; min-width: 130px; }
+        .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 14px; }
+        .stat { background: #f7f9fc; border: 1px solid var(--line); border-radius: 12px; padding: 12px; min-width: 0; }
+        .stat small { display: block; color: var(--m); }
+        .stat strong { display: block; font-size: clamp(17px, 3vw, 23px); overflow-wrap: anywhere; margin-top: 4px; }
         
-        .checklist{display:grid;gap:9px}
-        .checkrow{display:flex;align-items:center;gap:10px;padding:11px;background:#f7f9fc;border:1px solid var(--line);border-radius:11px}
-        .checkrow.locked{opacity:.55}
-        .mark{width:24px;height:24px;border-radius:6px;background:#dde3ed;display:grid;place-items:center;flex:none;font-weight:bold}
-        .checkrow.ok .mark{background:#d1ead9;color:var(--green)}
-        .checktext{flex:1;font-size:13px}
-        .checkrow button{font-size:12px;padding:7px 9px}
-        .warning-line{display:block;font-size:11px;color:#9a5c00;margin-top:2px;font-style:italic}
-        .pill{display:inline-block;border-radius:20px;padding:3px 8px;background:#edf1f7;font-size:11px}
-        .pill.locked{background:#f2cdcf;color:#962f37}.pill.ok{background:#d1ead9;color:var(--green)}
-        .note{background:#fff8e9;border:1px solid #f0dfb7;border-radius:10px;padding:10px;font-size:12px;color:#76520d;margin-top:12px}
-        .timer-box{background:#eef3fb;border:1px solid #dce6f5;border-radius:10px;padding:9px 12px;font-size:13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-        .timer-box .time{font-weight:bold;color:var(--n);font-family:monospace;font-size:15px}
-        .timer-box.warning{background:#fff4e2;border-color:#f0ddb5;color:#7c5107}
-        .timer-box.expired{background:#fff0f0;border-color:#f2cdcf;color:#962f37}
-        .tip{background:#eef3fb;border:1px solid #dce6f5;border-radius:10px;padding:10px 12px;font-size:12px;color:#2c4a7a;margin-top:8px}
-        footer{text-align:center;padding:0 0 24px;color:var(--m);font-size:12px}
+        .status { padding: 13px; border-radius: 12px; background: #eef3fb; border: 1px solid #dce6f5; font-size: 14px; }
+        .good { background: #eaf6f0 !important; border-color: #c8e8d8 !important; color: #126b4c; }
+        .warn { background: #fff4e2 !important; border-color: #f0ddb5 !important; color: #7c5107; }
+        .bad { background: #fff0f0 !important; border-color: #f2cdcf !important; color: #962f37; }
         
-        @media(max-width:740px){.s8,.s4,.s6{grid-column:span 12}.stats{grid-template-columns:1fr}.checkrow{flex-wrap:wrap}.checktext{min-width:calc(100% - 45px)}.checkrow button{margin-inline-start:34px}.buttons button{min-width:calc(50% - 8px)}}
+        .kv { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; font-size: 13px; margin-top: 14px; }
+        .kv div:nth-child(odd) { color: var(--m); }
+        .kv div:nth-child(even) { font-weight: bold; direction: ltr; text-align: left; }
+        body.en .kv div:nth-child(even) { text-align: right; }
+        
+        .piewrap { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; }
+        .pie { width: 140px; height: 140px; flex: none; border-radius: 50%; background: conic-gradient(var(--g) 0 90%, var(--blue) 90% 100%); position: relative; }
+        .pie:after { content: ""; position: absolute; inset: 24px; background: #fff; border-radius: 50%; }
+        .legend { flex: 1; min-width: 160px; } .legend div { margin: 9px 0; }
+        
+        .audit { display: grid; gap: 8px; max-height: 300px; overflow: auto; }
+        .event { border: 1px solid var(--line); border-right: 4px solid #9aa8bc; border-radius: 9px; padding: 9px 11px; font-size: 13px; background: #fbfcfe; }
+        body.en .event { border-right: 1px solid var(--line); border-left: 4px solid #9aa8bc; }
+        .event time { display: block; font-size: 11px; color: var(--m); margin-bottom: 3px; }
+        .event.good { border-right-color: var(--green) !important; }
+        body.en .event.good { border-left-color: var(--green) !important; }
+        .event.warn { border-right-color: #c38a1b !important; }
+        body.en .event.warn { border-left-color: #c38a1b !important; }
+        .event.bad { border-right-color: var(--red) !important; }
+        body.en .event.bad { border-left-color: var(--red) !important; }
+        
+        .checklist { display: grid; gap: 9px; }
+        .checkrow { display: flex; align-items: center; gap: 10px; padding: 11px; background: #f7f9fc; border: 1px solid var(--line); border-radius: 11px; }
+        .checkrow.locked { opacity: .55; }
+        .mark { width: 24px; height: 24px; border-radius: 6px; background: #dde3ed; display: grid; place-items: center; flex: none; font-weight: bold; }
+        .checkrow.ok .mark { background: #d1ead9; color: var(--green); }
+        .checktext { flex: 1; font-size: 13px; }
+        .checkrow button { font-size: 12px; padding: 7px 9px; }
+        .warning-line { display: block; font-size: 11px; color: #9a5c00; margin-top: 2px; font-style: italic; }
+        .pill { display: inline-block; border-radius: 20px; padding: 3px 8px; background: #edf1f7; font-size: 11px; }
+        .pill.locked { background: #f2cdcf; color: #962f37; } .pill.ok { background: #d1ead9; color: var(--green); }
+        .note { background: #fff8e9; border: 1px solid #f0dfb7; border-radius: 10px; padding: 10px; font-size: 12px; color: #76520d; margin-top: 12px; }
+        .timer-box { background: #eef3fb; border: 1px solid #dce6f5; border-radius: 10px; padding: 9px 12px; font-size: 13px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .timer-box .time { font-weight: bold; color: var(--n); font-family: monospace; font-size: 15px; }
+        .timer-box.warning { background: #fff4e2; border-color: #f0ddb5; color: #7c5107; }
+        .timer-box.expired { background: #fff0f0; border-color: #f2cdcf; color: #962f37; }
+        .tip { background: #eef3fb; border: 1px solid #dce6f5; border-radius: 10px; padding: 10px 12px; font-size: 12px; color: #2c4a7a; margin-top: 8px; }
+        
+        .agent-row { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid var(--line); font-size: 13px; }
+        .agent-row:last-child { border-bottom: none; }
+        .badge { padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-active { background: #d1ead9; color: var(--green); }
+        .badge-warning { background: #f2cdcf; color: var(--red); }
+
+        footer { text-align: center; padding: 0 0 24px; color: var(--m); font-size: 12px; }
+        
+        @media(max-width: 740px) { .s8, .s4, .s6 { grid-column: span 12; } .stats { grid-template-columns: 1fr; } .checkrow { flex-wrap: wrap; } .checktext { min-width: calc(100% - 45px); } .checkrow button { margin-inline-start: 34px; } .buttons button { min-width: calc(50% - 8px); } }
     </style>
 </head>
 <body>
 
-<!-- شاشة الترحيب -->
 <div id="splash-screen">
     <div class="splash-logo">SMART BANK SOLUTION</div>
     <div class="splash-text">
@@ -121,10 +119,19 @@
     <div class="brand">SMART BANK SOLUTION</div>
     <h1 id="t_title">الحساب الذكي — محاكاة تفاعلية</h1>
     <div class="byline">محمد زكى احمد</div>
-    <p class="subtitle" id="t_subtitle">نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10 وقواعد الربح والمخاطر.</p>
+    <p class="subtitle" id="t_subtitle">نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10، الوكلاء المتعددين، وقواعد الربح والمخاطر.</p>
 </div></header>
 
 <main class="wrap"><div class="grid">
+    <section class="card s4">
+        <h2 id="t_agentsTitle">شبكة الوكلاء المتعددين (AI Agents)</h2>
+        <div class="agent-row"><span id="t_agent1">1. وكيل رصد السيولة</span><span class="badge badge-active" id="agent-liquidity">متصل</span></div>
+        <div class="agent-row"><span id="t_agent2">2. وكيل المخاطر (CPPI)</span><span class="badge badge-active" id="agent-risk">مراقب (-2%)</span></div>
+        <div class="agent-row"><span id="t_agent3">3. وكيل التسوية الصافية</span><span class="badge badge-active" id="agent-settlement">جاهز</span></div>
+        <div class="agent-row"><span id="t_agent4">4. وكيل الحوكمة والاستئناف</span><span class="badge badge-active" id="agent-gov">نشط</span></div>
+        <div class="tip" id="t_agentNote">النظام يعتمد على تنسيق الوكلاء لرصد السيولة، تقييم المخاطر، والتسوية الآلية تحت إشراف الحوكمة.</div>
+    </section>
+
     <section class="card s8">
         <h2 id="t_capTitle">رأس المال الافتراضي</h2>
         <div class="row">
@@ -218,103 +225,66 @@
 <footer class="wrap" id="t_footer">Smart Bank Solution — نموذج مستقل غير تابع لأي جهة. لا اتصال بمنصات استثمار ولا ضمان لرأس المال أو العائد.</footer>
 
 <script>
-// دالة الدخول وتشغيل النغمة
 function enterApp() {
-    // تشغيل النغمة الموسيقية
     playWelcomeChime();
-    
-    // إخفاء شاشة الترحيب
     const splash = document.getElementById('splash-screen');
     if (splash) splash.classList.add('hidden');
 }
 
-// دالة توليد النغمة الموسيقية (Web Audio API)
 function playWelcomeChime() {
     try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         if (!AudioContext) return;
         const ctx = new AudioContext();
-
-        // نغمة C5 -> E5 -> G5 (نغمة صاعدة هادئة)
         const notes = [523.25, 659.25, 783.99];
-        
         notes.forEach((freq, index) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
-            
-            osc.type = 'sine'; // موجة ناعمة
+            osc.type = 'sine';
             osc.frequency.value = freq;
-            
-            // بداية الصوت
             const startTime = ctx.currentTime + (index * 0.15);
-            const duration = 1.2; // مدة النغمة الواحدة
-            
+            const duration = 1.2;
             gain.gain.setValueAtTime(0, startTime);
-            gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05); // Fade in
-            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration); // Fade out
-            
+            gain.gain.linearRampToValueAtTime(0.3, startTime + 0.05);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
             osc.connect(gain);
             gain.connect(ctx.destination);
-            
             osc.start(startTime);
             osc.stop(startTime + duration);
         });
-    } catch (e) {
-        console.log("Audio not supported", e);
-    }
+    } catch (e) { console.log("Audio not supported", e); }
 }
 
-// القاموس الخاص بترجمة النصوص
 const i18n = {
     ar: {
-        langBtn: "English",
-        title: "الحساب الذكي — محاكاة تفاعلية",
-        subtitle: "نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10 وقواعد الربح والمخاطر.",
-        capTitle: "رأس المال الافتراضي", capLabel: "رأس المال بالجنيه المصري", applyBtn: "تحديث رأس المال",
-        totalLabel: "إجمالي رأس المال", safeLabel: "المكوّن المحافظ — 90%", growthLabel: "مكوّن النمو — 10%",
+        langBtn: "English", title: "الحساب الذكي — محاكاة تفاعلية", subtitle: "نموذج مستقل يعمل محليًا دون إنترنت، لتوضيح توزيع 90/10، الوكلاء المتعددين، وقواعد الربح والمخاطر.",
+        agentsTitle: "شبكة الوكلاء المتعددين (AI Agents)", agent1: "1. وكيل رصد السيولة", agent2: "2. وكيل المخاطر (CPPI)", agent3: "3. وكيل التسوية الصافية", agent4: "4. وكيل الحوكمة والاستئناف", agentNote: "النظام يعتمد على تنسيق الوكلاء لرصد السيولة، تقييم المخاطر، والتسوية الآلية تحت إشراف الحوكمة.",
+        capTitle: "رأس المال الافتراضي", capLabel: "رأس المال بالجنيه المصري", applyBtn: "تحديث رأس المال", totalLabel: "إجمالي رأس المال", safeLabel: "المكوّن المحافظ — 90%", growthLabel: "مكوّن النمو — 10%",
         pieTitle: "التوزيع الافتراضي", pieSafe: "🟨 المكوّن المحافظ: <b>90%</b>", pieGrowth: "🟦 مكوّن النمو: <b>10%</b>", pieNote: "افتراض تجريبي وليس توصية استثمارية.",
-        engineTitle: "محرك القواعد — المحاكاة",
-        btnProfit: "محاكاة ربح (2.985% صافي)", btnProfitHit: "محاكاة ربح محقق (+3% صافي)", btnLoss: "محاكاة هبوط −2% من النمو", btnInvalid: "بيانات غير صالحة", btnProtection: "اختبار حد الحساب −2%", btnNormal: "إعادة ضبط العرض",
-        tip: "<b>حد إيقاف الشراء:</b> خسارة −2% من مكوّن النمو توقف الشراء الجديد. اختبار حد الحساب منفصل. لا يمثل أي منهما ضمانًا لرأس المال.",
-        note1: "إعادة ضبط العرض أو محاكاة الربح لا ترفع الحظر إذا كان مفعّلًا.",
-        perfTitle: "ملخص الأداء الافتراضي", pnlLabel: "ربح/خسارة السيناريو", pctLabel: "نسبة الأداء", buyLabel: "أوامر الشراء",
-        buyStateStopped: "موقوفة مؤقتًا", buyStateActive: "غير موقوفة",
+        engineTitle: "محرك القواعد — المحاكاة", btnProfit: "محاكاة ربح (2.985% صافي)", btnProfitHit: "محاكاة ربح محقق (+3% صافي)", btnLoss: "محاكاة هبوط −2% من النمو", btnInvalid: "بيانات غير صالحة", btnProtection: "اختبار حد الحساب −2%", btnNormal: "إعادة ضبط العرض",
+        tip: "<b>حد إيقاف الشراء:</b> خسارة −2% من مكوّن النمو توقف الشراء الجديد. اختبار حد الحساب منفصل. لا يمثل أي منهما ضمانًا لرأس المال.", note1: "إعادة ضبط العرض أو محاكاة الربح لا ترفع الحظر إذا كان مفعّلًا.",
+        perfTitle: "ملخص الأداء الافتراضي", pnlLabel: "ربح/خسارة السيناريو", pctLabel: "نسبة الأداء", buyLabel: "أوامر الشراء", buyStateStopped: "موقوفة مؤقتًا", buyStateActive: "غير موقوفة",
         kv1: "عتبة قفل الربح الصافي", kv2: "عتبة إيقاف الشراء — النمو", kv3: "تكلفة محاكاة الربح",
-        resumeTitle: "إجراء الاستئناف الموثق", resumeNote: "تأكيدات هذا العرض تجريبية فقط. الخطوات بالترتيب. صلاحية الجلسة 15 دقيقة، ثم تُبطل تلقائيًا.",
-        timerLabel: "الوقت المتبقي للاستئناف:",
-        step1: "التحقق من البيانات", step1desc: "سليمة وحديثة ومن مصدر موثوق.", step1warn: "تأكيد محاكاة فقط.",
-        step2: "الإشارة الفنية", step2desc: "إشارة محددة مسبقًا في سياسة المنتج.", step2warn: "تأكيد محاكاة فقط.",
-        step3: "الموافقة البشرية", step3desc: "موافقة مسؤول مخوّل في النظام الحقيقي.", step3warn: "تأكيد محاكاة فقط.",
-        btnStep: "تسجيل تأكيد تجريبي", btnResume: "اعتماد الاستئناف ورفع الحظر", btnRenew: "تجديد جلسة الاستئناف", btnAbort: "إلغاء إجراء الاستئناف",
-        resumeNote2: "أي سيناريو جديد أو تغيير لرأس المال يبطل التأكيدات السابقة. إيقاف الشراء لا يضمن حصر الخسارة عند −2%.",
+        resumeTitle: "إجراء الاستئناف الموثق", resumeNote: "تأكيدات هذا العرض تجريبية فقط. الخطوات بالترتيب. صلاحية الجلسة 15 دقيقة، ثم تُبطل تلقائيًا.", timerLabel: "الوقت المتبقي للاستئناف:",
+        step1: "التحقق من البيانات", step1desc: "سليمة وحديثة ومن مصدر موثوق.", step1warn: "تأكيد محاكاة فقط.", step2: "الإشارة الفنية", step2desc: "إشارة محددة مسبقًا في سياسة المنتج.", step2warn: "تأكيد محاكاة فقط.", step3: "الموافقة البشرية", step3desc: "موافقة مسؤول مخوّل في النظام الحقيقي.", step3warn: "تأكيد محاكاة فقط.",
+        btnStep: "تسجيل تأكيد تجريبي", btnResume: "اعتماد الاستئناف ورفع الحظر", btnRenew: "تجديد جلسة الاستئناف", btnAbort: "إلغاء إجراء الاستئناف", resumeNote2: "أي سيناريو جديد أو تغيير لرأس المال يبطل التأكيدات السابقة. إيقاف الشراء لا يضمن حصر الخسارة عند −2%.",
         logTitle: "سجل التدقيق المحلي", btnClear: "مسح سجل العرض المحلي", btnExport: "تصدير السجل النصي", logNote: "السجل محلي داخل الصفحة الحالية ويمكن مسحه أو تعديله.",
-        biiPill: "قيد التطوير", biiNote1: "غير مفعّل في هذه النسخة.", biiNote2: "لن يُستخدم قبل تحديد المنهجية والمصادر واختباره بصورة مستقلة.", biiStatus: "محاكاة فقط",
-        footer: "Smart Bank Solution — نموذج مستقل غير تابع لأي جهة. لا اتصال بمنصات استثمار ولا ضمان لرأس المال أو العائد."
+        biiPill: "قيد التطوير", biiNote1: "غير مفعّل في هذه النسخة.", biiNote2: "لن يُستخدم قبل تحديد المنهجية والمصادر واختباره بصورة مستقلة.", biiStatus: "محاكاة فقط", footer: "Smart Bank Solution — نموذج مستقل غير تابع لأي جهة. لا اتصال بمنصات استثمار ولا ضمان لرأس المال أو العائد."
     },
     en: {
-        langBtn: "عربي",
-        title: "Smart Account — Interactive Simulation",
-        subtitle: "An independent offline model to illustrate 90/10 allocation, profit, and risk rules.",
-        capTitle: "Virtual Capital", capLabel: "Capital in EGP", applyBtn: "Update Capital",
-        totalLabel: "Total Capital", safeLabel: "Safe Bucket — 90%", growthLabel: "Growth Bucket — 10%",
+        langBtn: "عربي", title: "Smart Account — Interactive Simulation", subtitle: "An independent offline model to illustrate 90/10 allocation, multi-agents, and risk/profit rules.",
+        agentsTitle: "Multi-Agent Network", agent1: "1. Liquidity Agent", agent2: "2. Risk Agent (CPPI)", agent3: "3. Clean Settlement Agent", agent4: "4. Governance & Appeal Agent", agentNote: "The system coordinates agents for liquidity monitoring, risk assessment, and auto-settlement under governance.",
+        capTitle: "Virtual Capital", capLabel: "Capital in EGP", applyBtn: "Update Capital", totalLabel: "Total Capital", safeLabel: "Safe Bucket — 90%", growthLabel: "Growth Bucket — 10%",
         pieTitle: "Default Allocation", pieSafe: "🟨 Safe Bucket: <b>90%</b>", pieGrowth: "🟦 Growth Bucket: <b>10%</b>", pieNote: "Simulation assumption, not investment advice.",
-        engineTitle: "Rules Engine — Simulation",
-        btnProfit: "Simulate Profit (2.985% Net)", btnProfitHit: "Simulate Realized Profit (+3% Net)", btnLoss: "Simulate Drop −2% (Growth)", btnInvalid: "Invalid Data", btnProtection: "Test Account Limit −2%", btnNormal: "Reset View",
-        tip: "<b>Buy Stop-Limit:</b> A -2% loss in the Growth bucket stops new buys. Account limit test is separate. Neither guarantees capital.",
-        note1: "Resetting the view or simulating profit does not lift the block if active.",
-        perfTitle: "Virtual Performance Summary", pnlLabel: "Scenario P/L", pctLabel: "Performance Ratio", buyLabel: "Buy Orders",
-        buyStateStopped: "Temporarily Stopped", buyStateActive: "Active",
+        engineTitle: "Rules Engine — Simulation", btnProfit: "Simulate Profit (2.985% Net)", btnProfitHit: "Simulate Realized Profit (+3% Net)", btnLoss: "Simulate Drop −2% (Growth)", btnInvalid: "Invalid Data", btnProtection: "Test Account Limit −2%", btnNormal: "Reset View",
+        tip: "<b>Buy Stop-Limit:</b> A -2% loss in the Growth bucket stops new buys. Account limit test is separate. Neither guarantees capital.", note1: "Resetting the view or simulating profit does not lift the block if active.",
+        perfTitle: "Virtual Performance Summary", pnlLabel: "Scenario P/L", pctLabel: "Performance Ratio", buyLabel: "Buy Orders", buyStateStopped: "Temporarily Stopped", buyStateActive: "Active",
         kv1: "Net Profit Lock Threshold", kv2: "Buy Stop Threshold — Growth", kv3: "Profit Simulation Cost",
-        resumeTitle: "Documented Appeal Process", resumeNote: "Confirmations are simulated. Steps are sequential. Session valid for 15 mins.",
-        timerLabel: "Remaining Time:",
-        step1: "Data Validation", step1desc: "Valid, recent, and from a trusted source.", step1warn: "Simulation only.",
-        step2: "Technical Signal", step2desc: "Predefined signal in product policy.", step2warn: "Simulation only.",
-        step3: "Human Approval", step3desc: "Authorized official approval in real system.", step3warn: "Simulation only.",
-        btnStep: "Record Simulated Confirmation", btnResume: "Approve Appeal & Lift Block", btnRenew: "Renew Appeal Session", btnAbort: "Cancel Appeal",
-        resumeNote2: "Any new scenario or capital change invalidates previous confirmations. Stopping buys does not guarantee loss limit at -2%.",
+        resumeTitle: "Documented Appeal Process", resumeNote: "Confirmations are simulated. Steps are sequential. Session valid for 15 mins.", timerLabel: "Remaining Time:",
+        step1: "Data Validation", step1desc: "Valid, recent, and from a trusted source.", step1warn: "Simulation only.", step2: "Technical Signal", step2desc: "Predefined signal in product policy.", step2warn: "Simulation only.", step3: "Human Approval", step3desc: "Authorized official approval in real system.", step3warn: "Simulation only.",
+        btnStep: "Record Simulated Confirmation", btnResume: "Approve Appeal & Lift Block", btnRenew: "Renew Appeal Session", btnAbort: "Cancel Appeal", resumeNote2: "Any new scenario or capital change invalidates previous confirmations. Stopping buys does not guarantee loss limit at -2%.",
         logTitle: "Local Audit Log", btnClear: "Clear Local Log", btnExport: "Export Text Log", logNote: "Log is local to this page and can be cleared.",
-        biiPill: "In Development", biiNote1: "Not activated in this version.", biiNote2: "Will not be used before methodology and sources are independently tested.", biiStatus: "Simulation Only",
-        footer: "Smart Bank Solution — Independent model. Not affiliated with any entity. No real trading, no capital guarantee."
+        biiPill: "In Development", biiNote1: "Not activated in this version.", biiNote2: "Will not be used before methodology and sources are independently tested.", biiStatus: "Simulation Only", footer: "Smart Bank Solution — Independent model. Not affiliated with any entity. No real trading, no capital guarantee."
     }
 };
 
@@ -323,7 +293,6 @@ let currentLang = 'ar';
 function toggleLang() {
     currentLang = currentLang === 'ar' ? 'en' : 'ar';
     const dict = i18n[currentLang];
-    
     document.documentElement.lang = currentLang;
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
     document.body.className = currentLang === 'en' ? 'en' : '';
@@ -331,6 +300,13 @@ function toggleLang() {
     document.getElementById('langBtn').innerText = dict.langBtn;
     document.getElementById('t_title').innerText = dict.title;
     document.getElementById('t_subtitle').innerText = dict.subtitle;
+    document.getElementById('t_agentsTitle').innerText = dict.agentsTitle;
+    document.getElementById('t_agent1').innerText = dict.agent1;
+    document.getElementById('t_agent2').innerText = dict.agent2;
+    document.getElementById('t_agent3').innerText = dict.agent3;
+    document.getElementById('t_agent4').innerText = dict.agent4;
+    document.getElementById('t_agentNote').innerText = dict.agentNote;
+    
     document.getElementById('t_capTitle').innerText = dict.capTitle;
     document.getElementById('t_capLabel').innerText = dict.capLabel;
     document.getElementById('t_applyBtn').innerText = dict.applyBtn;
@@ -403,6 +379,7 @@ function toggleLang() {
 let capital = 100000, stopped = false, seq = 0, inProgress = false;
 let checks = {data: false, signal: false, human: false};
 let sessionId = null, timer = null, remaining = 0;
+let renewalRequired = false; 
 const SESSION = 900;
 
 const money = n => new Intl.NumberFormat('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(n) + (currentLang === 'ar' ? ' ج.م' : ' EGP');
@@ -431,14 +408,22 @@ function stopTimer() {
     remaining = 0;
 }
 
-function clearChecks(reason = '') {
+// Fix: only require renewal if block is active (stopped == true)
+function clearChecks(reason = '', requireRenewal = stopped) {
     const had = inProgress || checks.data || checks.signal || checks.human;
+
     inProgress = false;
     checks = {data: false, signal: false, human: false};
     sessionId = null;
+
+    renewalRequired = requireRenewal;
     stopTimer();
-    document.getElementById('renew').hidden = true;
-    if (had && reason) log(reason + (currentLang==='ar'?'؛ أُلغيت التأكيدات السابقة والحظر مستمر.':' - Previous confirmations cleared, block remains.'), 'warn');
+
+    document.getElementById('renew').hidden = !requireRenewal;
+
+    if (had && reason) {
+        log(reason + (currentLang==='ar'?'؛ أُلغيت التأكيدات السابقة والحظر مستمر.':' - Previous confirmations cleared, block remains.'), 'warn');
+    }
     render();
 }
 
@@ -463,6 +448,7 @@ function startTimer() {
             inProgress = false;
             checks = {data: false, signal: false, human: false};
             sessionId = null;
+            renewalRequired = true; 
             document.getElementById('timerBox').hidden = false;
             document.getElementById('timerBox').className = 'timer-box expired';
             document.getElementById('timerValue').textContent = '00:00';
@@ -487,8 +473,22 @@ function render() {
         const row = document.getElementById('r' + k), done = checks[k];
         row.classList.toggle('ok', done);
         row.classList.toggle('locked', !stopped);
-        row.querySelector('.mark').textContent = done ? '✓' : String(i + 1);
-        row.querySelector('button').disabled = !stopped || !inProgress || done || (k === 'signal' && !checks.data) || (k === 'human' && !(checks.data && checks.signal));
+        
+        const mark = row.querySelector('.mark');
+        mark.textContent = done ? '✓' : String(i + 1);
+        
+        const btn = row.querySelector('button');
+        let isDisabled = !stopped || done || renewalRequired; 
+        
+        if (k === 'data') {
+            isDisabled = isDisabled; 
+        } else if (k === 'signal') {
+            isDisabled = isDisabled || !checks.data; 
+        } else if (k === 'human') {
+            isDisabled = isDisabled || !(checks.data && checks.signal); 
+        }
+        
+        btn.disabled = isDisabled;
     });
     
     const all = stopped && inProgress && checks.data && checks.signal && checks.human;
@@ -582,6 +582,10 @@ document.querySelectorAll('[data-s]').forEach(b => b.addEventListener('click', (
 
 document.querySelectorAll('[data-r]').forEach(btn => btn.addEventListener('click', () => {
     if (!stopped) return;
+    if (renewalRequired) {
+        status(currentLang==='ar'?'يجب تجديد الجلسة أولاً!':'Renew session first!', 'warn');
+        return;
+    }
     const k = btn.dataset.r;
     if (!inProgress) {
         if (k !== 'data') { status(currentLang==='ar'?'ابدأ بالتحقق من البيانات أولًا.':'Start with data validation.', 'warn'); return; }
@@ -606,17 +610,20 @@ document.getElementById('resume').addEventListener('click', () => {
     if (!(stopped && inProgress && checks.data && checks.signal && checks.human)) return;
     const uid = sessionId;
     stopped = false;
-    clearChecks();
+    clearChecks('', false);
     render();
     status(currentLang==='ar'?'تم رفع الحظر في المحاكاة بعد اكتمال الخطوات التجريبية.':'Block lifted in simulation after steps completed.', 'good');
     log((currentLang==='ar'?'اعتماد استئناف تجريبي ':'Appeal approved ')+uid+(currentLang==='ar'?'؛ رُفع الحظر.':' - Block lifted.'), 'good');
 });
 
 document.getElementById('renew').addEventListener('click', () => {
-    if (!stopped) return;
-    clearChecks(currentLang==='ar'?'تجديد جلسة الاستئناف':'Appeal session renewed');
+    if (!stopped || !renewalRequired) return;
+    clearChecks(
+        currentLang === 'ar' ? 'تجديد جلسة الاستئناف' : 'Appeal session renewed',
+        false 
+    );
     document.getElementById('renew').hidden = true;
-    status(currentLang==='ar'?'تم تجديد الجلسة؛ ابدأ بتأكيد البيانات.':'Session renewed; start with data.', '');
+    status(currentLang==='ar'?'تم التجديد؛ ابدأ بتأكيد البيانات.':'Session renewed; start with data validation.', '');
     log(currentLang==='ar'?'تم طلب جلسة استئناف جديدة.':'New appeal session requested.', '');
 });
 
@@ -624,8 +631,7 @@ document.getElementById('abort').addEventListener('click', () => {
     if (!stopped || !inProgress) return;
     if (!confirm(currentLang==='ar'?'إلغاء الإجراء ومسح التأكيدات؟ سيبقى الحظر مفعّلًا.':'Cancel and clear confirmations? Block remains.')) return;
     const uid = sessionId;
-    clearChecks(currentLang==='ar'?'إلغاء إجراء الاستئناف':'Appeal cancelled');
-    document.getElementById('renew').hidden = false;
+    clearChecks(currentLang==='ar'?'إلغاء إجراء الاستئناف':'Appeal cancelled'); 
     status(currentLang==='ar'?'أُلغي الإجراء؛ الحظر مستمر.':'Cancelled; block remains.', 'bad');
     log((currentLang==='ar'?'إلغاء جلسة ':'Cancelled session ')+uid+'.', 'warn');
 });
@@ -652,7 +658,6 @@ function exportLog() {
 log(currentLang==='ar'?'تم تحميل Smart Bank Solution (PWA)؛ جميع العمليات افتراضية فقط.':'Smart Bank Solution (PWA) loaded; all operations are simulated.');
 render();
 
-// Service Worker Registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./service-worker.js')
